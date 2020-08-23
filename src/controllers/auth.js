@@ -27,7 +27,7 @@ const createUser = async (req, res) => {
       ok: true,
       msg: 'Usuario creado',
       user: {
-        _id,
+        uid: _id,
         name,
       },
     });
@@ -35,8 +35,48 @@ const createUser = async (req, res) => {
     console.log(error);
     res.status(500).json({
       ok: false,
-      msg: 'Error al  crear el usuario',
-      error: error,
+      msg: 'Por favor  comunicarse con el administrador',
+    });
+  }
+};
+
+const loginUser = async (req = request, res = response) => {
+  const { email, password } = req.body;
+
+  try {
+    // Validator the email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        ok: false,
+        msg: `El email ${email} no existe`,
+      });
+    }
+    // Validator - Confirm password
+    const validatePassword = bcrypt.compareSync(password, user.password);
+    console.log(validatePassword);
+    if (!validatePassword) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'Password incorrecta !!',
+      });
+    }
+
+    // TODO: Generar JWT
+
+    res.json({
+      ok: true,
+      msg: 'Login user',
+      user: {
+        uid: user._id,
+        name: user.name,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Por favor  comunicarse con el administrador',
     });
   }
 };
@@ -45,16 +85,6 @@ const renovateToken = (req = request, res = response) => {
   res.json({
     ok: true,
     msg: 'Renovando token',
-  });
-};
-
-const loginUser = (req = request, res = response) => {
-  const { body } = req;
-
-  res.json({
-    ok: true,
-    msg: 'Login user',
-    data: body,
   });
 };
 
