@@ -1,4 +1,5 @@
 const Evento = require('../models/Event');
+const { isEvent } = require('../helpers/isEvent');
 
 // GET
 const findEvents = async (req, res) => {
@@ -55,26 +56,13 @@ const updateEvent = async (req, res) => {
 
   try {
     // Validacion del evento
-    const event = await Evento.findById(id);
-    if (!event) {
-      return res.status(404).json({
-        ok: false,
-        msg: 'Evento no existe',
-      });
-    }
-    if (event.user.toString() !== uid) {
-      return res.status(401).json({
-        ok: false,
-        msg: 'Usuario no tiene  permiso',
-      });
-    }
+    await isEvent(Evento, id, uid, res);
+
     const newEvent = {
       ...req.body,
       user: uid,
     };
-
     const updatedEvent = await Evento.findByIdAndUpdate(id, newEvent, options);
-
     res.json({
       ok: true,
       event: updatedEvent,
@@ -89,11 +77,26 @@ const updateEvent = async (req, res) => {
 };
 
 // DELETE
-const deleteEvent = (req, res) => {
-  res.json({
-    ok: true,
-    msg: 'DELETE: exitoso',
-  });
+const deleteEvent = async (req, res) => {
+  const { id } = req.params;
+  const { uid } = req.user;
+
+  try {
+    // Validacion del evento
+    await isEvent(Evento, id, uid, res);
+    const deletedEvent = await Evento.findByIdAndDelete(id);
+    res.json({
+      ok: true,
+      msg: 'Evento Eliminado',
+      event: deletedEvent,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Comuniquese con el administrador',
+    });
+  }
 };
 
 module.exports = {
