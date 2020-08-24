@@ -27,7 +27,16 @@ router.post(
   createEvent
 );
 router.get('/api/event/', findEvents);
-router.put('/api/event/:id', updateEvent);
+router.put(
+  '/api/event/:id',
+  [
+    check('title', 'El titulo es obligatorio').not().isEmpty(),
+    check('start', 'La fecha inicial es obligatoria').custom(isDate),
+    check('end', 'La fecha inicial es obligatoria').custom(isDate),
+    validateFields,
+  ],
+  updateEvent
+);
 router.delete('/api/event/:id', deleteEvent);
 
 module.exports = router;
