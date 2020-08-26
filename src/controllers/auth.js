@@ -97,6 +97,7 @@ const renovateToken = async (req = request, res = response) => {
     ok: true,
     msg: 'Renovando token',
     token,
+    user,
   });
 };
 
