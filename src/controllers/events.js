@@ -37,12 +37,6 @@ const createEvent = async (req, res) => {
       msg: 'Comuniquese con el administrador',
     });
   }
-
-  res.json({
-    ok: true,
-    msg: 'POST: exitoso',
-    data: event,
-  });
 };
 
 // PUT
