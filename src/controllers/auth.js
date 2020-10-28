@@ -82,7 +82,7 @@ const loginUser = async (req = request, res = response) => {
     console.log(error);
     res.status(500).json({
       ok: false,
-      msg: 'Por favor  comunicarse con el administrador',
+      msg: 'Por favor  comunicarse con el admin',
     });
   }
 };
